@@ -10,7 +10,6 @@
     "postinstall": "yarn compile"
   },
   "devDependencies": {
-    "@eth-optimism/contracts": "^0.4.5",
     "@eth-optimism/hardhat-ovm": "^0.2.2",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@types/chai": "^4.2.16",
@@ -20,6 +19,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "@eth-optimism/contracts": "^0.4.7",
     "@eth-optimism/watcher": "^0.0.1-alpha.9",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^3.4.0",
@@ -32,6 +32,6 @@
     "typescript": "^4.2.4",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
-    "hardhat": "^2.4.1"
+    "hardhat": "^2.6.0"
   }
 }

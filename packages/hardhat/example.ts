@@ -1,14 +1,14 @@
 
 import { Watcher } from '@eth-optimism/watcher';
-import { getContractFactory }  from '@eth-optimism/contracts';
+import { getContractFactory } from '@eth-optimism/contracts';
 import { getOptimismRevertReason } from './utils/revertOptimism';
 import { ethers } from 'hardhat';
 import BatchWithdrawablePoolAdapter from './utils/BatchWithdrawalablePoolAdapter';
 import { BatchWithdrawablePool } from './typechain';
 
 // Set up some contract factories. You can ignore this stuff.
-const factory = (name, ovm = false, mocks= false) => {
-  const artifact = require(`./artifacts${ovm ? '-ovm' : ''}/contracts/${mocks ? '/mocks/' : ''}${name}.sol/${name}.json`)
+const factory = (name, ovm = false, mocks = false) => {
+  const artifact = require(`./artifacts${ ovm ? '-ovm' : '' }/contracts/${ mocks ? '/mocks/' : '' }${ name }.sol/${ name }.json`)
   return new ethers.ContractFactory(artifact.abi, artifact.bytecode)
 }
 const factory__L1_ERC20 = factory('ERC20')
@@ -59,7 +59,7 @@ async function main() {
     'mockDAI', //name
   )
   await L1_mockDAI.deployTransaction.wait()
-  console.log("L1_mockDAI address: ",L1_mockDAI.address)
+  console.log("L1_mockDAI address: ", L1_mockDAI.address)
 
 
   console.log("Deploying L1_CurveDepositZap ...");
@@ -68,7 +68,7 @@ async function main() {
   )
   await L1_CurveDepositZap.deployTransaction.wait();
 
-  console.log("L1_CurveDepositZap address: ",L1_CurveDepositZap.address)
+  console.log("L1_CurveDepositZap address: ", L1_CurveDepositZap.address)
 
   console.log("Deploying L1_MockYearnVault ...");
   const L1_YearnVault = await factory__L1_MockYearnVault.connect(l1Wallet).deploy(
@@ -76,7 +76,7 @@ async function main() {
   );
   await L1_YearnVault.deployTransaction.wait();
 
-  console.log("L1_YearnVault address: ",L1_YearnVault.address)
+  console.log("L1_YearnVault address: ", L1_YearnVault.address)
 
 
   // Deploy the paired ERC20 token to L2.
@@ -91,7 +91,7 @@ async function main() {
   )
   await L2_oDAI.deployTransaction.wait()
 
-  console.log("L2_oDAI address: ",L2_oDAI.address)
+  console.log("L2_oDAI address: ", L2_oDAI.address)
 
 
   // Create a gateway that connects the two contracts.
@@ -103,7 +103,7 @@ async function main() {
   )
   await L1_ERC20Gateway.deployTransaction.wait()
 
-  console.log("L1_ERC20Gateway address: ",L1_ERC20Gateway.address)
+  console.log("L1_ERC20Gateway address: ", L1_ERC20Gateway.address)
 
   console.log("Deploying L1_Pool ...")
   const L1_Pool = await factory__L1_Pool.connect(l1Wallet).deploy(
@@ -117,7 +117,7 @@ async function main() {
   )
   await L1_Pool.deployTransaction.wait();
 
-  console.log("L1_Pool address: ",L1_Pool.address)
+  console.log("L1_Pool address: ", L1_Pool.address)
 
 
   console.log("Deploying L2_Pool ...")
@@ -135,13 +135,13 @@ async function main() {
 
   await L2_Pool.deployTransaction.wait();
 
-  console.log("L2_Pool address: ",L2_Pool.address)
+  console.log("L2_Pool address: ", L2_Pool.address)
 
   console.log('Setting L2_Pool address on L1_Pool ...');
   const setL2PoolTx = await L1_Pool.connect(l1Wallet).setL2Pool(L2_Pool.address);
   await setL2PoolTx.wait();
 
-  console.log("L2 Pool address on L1 Pool set to:",  await L1_Pool.L2_Pool());
+  console.log("L2 Pool address on L1 Pool set to:", await L1_Pool.L2_Pool());
 
   // Make the L2 ERC20 aware of the gateway contract.
   console.log('Initializing L2 ERC20...')
@@ -154,8 +154,8 @@ async function main() {
   await tx0.wait()
 
   // Initial balances.
-  console.log(`Balance on L1: ${await L1_mockDAI.balanceOf(l1Wallet.address)}`) // 1234
-  console.log(`Balance on L2: ${await L2_oDAI.balanceOf(l1Wallet.address)}`) // 0
+  console.log(`Balance on L1: ${ await L1_mockDAI.balanceOf(l1Wallet.address) }`) // 1234
+  console.log(`Balance on L2: ${ await L2_oDAI.balanceOf(l1Wallet.address) }`) // 0
 
   // Allow the gateway to lock up some of our tokens.
   console.log('Approving tokens for ERC20 gateway...')
@@ -169,146 +169,146 @@ async function main() {
 
   // Wait for the message to be relayed to L2.
   console.log('Waiting for deposit to be relayed to L2...')
-  const [ msgHash1 ] = await watcher.getMessageHashesFromL1Tx(tx2.hash)
+  const [msgHash1] = await watcher.getMessageHashesFromL1Tx(tx2.hash)
   await watcher.getL2TransactionReceipt(msgHash1)
 
   // Log some balances to see that it worked!
-  console.log(`Balance on L1: ${await L1_mockDAI.balanceOf(l1Wallet.address)}`) // 0
-  console.log(`Balance on L2: ${await L2_oDAI.balanceOf(l1Wallet.address)}`) // 1234
+  console.log(`Balance on L1: ${ await L1_mockDAI.balanceOf(l1Wallet.address) }`) // 0
+  console.log(`Balance on L2: ${ await L2_oDAI.balanceOf(l1Wallet.address) }`) // 1234
 
 
   // allow L2_Pool to use our tokens
   console.log("Approving L2_Pool to spend oDAI ... ");
-  const approveTx = await L2_oDAI.connect(l2Wallet).approve(L2_Pool.address, 5000, { gasLimit: 8900000, gasPrice: 0})
+  const approveTx = await L2_oDAI.connect(l2Wallet).approve(L2_Pool.address, 5000, { gasLimit: 8900000, gasPrice: 0 })
   await approveTx.wait();
 
 
 
-    /* end demo */
+  /* end demo */
 
 
 
-    /** 
-     * start
-     * depost/withdrawal 1
-     */
+  /** 
+   * start
+   * depost/withdrawal 1
+   */
 
 
 
 
-/**
-
-
-  // deposit oDAI into L1_Pool
-  console.log("Depositing oDAI into L1_Pool ... ");
-  const depositTx = await L2_Pool.connect(l2Wallet).deposit(2500, { gasLimit: 8900000, gasPrice: 0});
-  //const revertReason2 = await getOptimismRevertReason({tx: depositTx, provider: l2RpcProvider });
+  /**
   
-  //if (revertReason2) {
-  //  console.log(revertReason2);
-  //}
-
-  await depositTx.wait();
-
-
-  console.log(" waiting for Pool deposit to be relayed to L1 ...")
-  const [depositHash] = await watcher.getMessageHashesFromL2Tx(depositTx.hash);
-  await watcher.getL1TransactionReceipt(depositHash);
-
-  console.log(`poolTokenEscrow balance : ${(await L1_Pool.balanceOf(poolTokenEscrow.address)).toString()}`)
-  console.log("Balance of DAI in L1_Pool: ", `${await L1_mockDAI.balanceOf(L1_Pool.address)}`);
-  console.log("Balance of L2_Pool tokens: ", `${await L2_Pool.balanceOf(l2Wallet.address)}`);
-  console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
-
-  // withdrawing DAI from L1_Pool
-  console.log("Pool Withdrawal (L2->L1->L2) ...");
-  const withdrawTx = await L2_Pool.connect(l2Wallet).requestWithdrawal(2500, { gasLimit: 8900000, gasPrice: 0});
-  //const revertReason3 = await getOptimismRevertReason({tx: withdrawTx, provider: l2RpcProvider });
   
-  //if (revertReason3) {
-  //  console.log(revertReason3);
-  //}
-
-  await withdrawTx.wait();
-
-  console.log("waiting for Pool Withdrawal to be relayed to Layer 2 ...")
-  const [withdrawHash] = await watcher.getMessageHashesFromL2Tx(withdrawTx.hash);
-  console.log("withdrawHash:" ,withdrawHash);
-  await watcher.getL1TransactionReceipt(withdrawHash)
-
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true)
-    }, 5000);
-  });
-
-  console.log(`oDAI in L2 wallet ${await L2_oDAI.balanceOf(l2Wallet.address)}`);
-  console.log("Balance of DAI in L2_Pool: ", `${await L2_oDAI.balanceOf(L2_Pool.address)}`);
-  console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
-
-  console.log("withdrawal summaries", (await pool.getWithdrawalSummaries(l2Wallet.address)));
-
-
-
-
-
-
-
-    /** 
-     * start
-     * depost/withdrawal 2
-     */
-
-    /*
-  // deposit oDAI into L1_Pool
-  console.log("Depositing oDAI into L1_Pool ... ");
-  const depositTx2 = await L2_Pool.connect(l2Wallet).deposit(200, { gasLimit: 8900000, gasPrice: 0});
-  const revertReason2 = await getOptimismRevertReason({tx: depositTx2, provider: l2RpcProvider });
+    // deposit oDAI into L1_Pool
+    console.log("Depositing oDAI into L1_Pool ... ");
+    const depositTx = await L2_Pool.connect(l2Wallet).deposit(2500, { gasLimit: 8900000, gasPrice: 0});
+    //const revertReason2 = await getOptimismRevertReason({tx: depositTx, provider: l2RpcProvider });
+    
+    //if (revertReason2) {
+    //  console.log(revertReason2);
+    //}
   
-  if (revertReason2) {
-    console.log(revertReason2);
-  }
-
-  await depositTx2.wait();
-
-
-  console.log(" waiting for Pool deposit to be relayed to L1 ...")
-  const [depositHash2] = await watcher.getMessageHashesFromL2Tx(depositTx2.hash);
-  await watcher.getL1TransactionReceipt(depositHash2);
-
-  console.log(`poolTokenEscrow balance ... ${(await L1_Pool.balanceOf(poolTokenEscrow.address)).toString()}`)
-  console.log("Balance of DAI in L1_Pool: ", `${await L1_mockDAI.balanceOf(L1_Pool.address)}`);
-  console.log("Balance of L2_Pool tokens: ", `${await L2_Pool.balanceOf(l2Wallet.address)}`);
-  console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
-
-  // withdrawing DAI from L1_Pool
-  console.log("Pool Withdrawal (L2->L1->L2) ...");
-  const withdrawTx2 = await L2_Pool.connect(l2Wallet).requestWithdrawal(200, { gasLimit: 8900000, gasPrice: 0});
-  const revertReason3 = await getOptimismRevertReason({tx: withdrawTx2, provider: l2RpcProvider });
+    await depositTx.wait();
   
-  if (revertReason3) {
-    console.log(revertReason3);
-  }
+  
+    console.log(" waiting for Pool deposit to be relayed to L1 ...")
+    const [depositHash] = await watcher.getMessageHashesFromL2Tx(depositTx.hash);
+    await watcher.getL1TransactionReceipt(depositHash);
+  
+    console.log(`poolTokenEscrow balance : ${(await L1_Pool.balanceOf(poolTokenEscrow.address)).toString()}`)
+    console.log("Balance of DAI in L1_Pool: ", `${await L1_mockDAI.balanceOf(L1_Pool.address)}`);
+    console.log("Balance of L2_Pool tokens: ", `${await L2_Pool.balanceOf(l2Wallet.address)}`);
+    console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
+  
+    // withdrawing DAI from L1_Pool
+    console.log("Pool Withdrawal (L2->L1->L2) ...");
+    const withdrawTx = await L2_Pool.connect(l2Wallet).requestWithdrawal(2500, { gasLimit: 8900000, gasPrice: 0});
+    //const revertReason3 = await getOptimismRevertReason({tx: withdrawTx, provider: l2RpcProvider });
+    
+    //if (revertReason3) {
+    //  console.log(revertReason3);
+    //}
+  
+    await withdrawTx.wait();
+  
+    console.log("waiting for Pool Withdrawal to be relayed to Layer 2 ...")
+    const [withdrawHash] = await watcher.getMessageHashesFromL2Tx(withdrawTx.hash);
+    console.log("withdrawHash:" ,withdrawHash);
+    await watcher.getL1TransactionReceipt(withdrawHash)
+  
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true)
+      }, 5000);
+    });
+  
+    console.log(`oDAI in L2 wallet ${await L2_oDAI.balanceOf(l2Wallet.address)}`);
+    console.log("Balance of DAI in L2_Pool: ", `${await L2_oDAI.balanceOf(L2_Pool.address)}`);
+    console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
+  
+    console.log("withdrawal summaries", (await pool.getWithdrawalSummaries(l2Wallet.address)));
+  
+  
+  
+  
+  
+  
+  
+      /** 
+       * start
+       * depost/withdrawal 2
+       */
 
-  await withdrawTx2.wait();
+  /*
+// deposit oDAI into L1_Pool
+console.log("Depositing oDAI into L1_Pool ... ");
+const depositTx2 = await L2_Pool.connect(l2Wallet).deposit(200, { gasLimit: 8900000, gasPrice: 0});
+const revertReason2 = await getOptimismRevertReason({tx: depositTx2, provider: l2RpcProvider });
+ 
+if (revertReason2) {
+  console.log(revertReason2);
+}
 
-  console.log("waiting for Pool Withdrawal to be relayed to Layer 2 ...")
-  const [withdrawHash2] = await watcher.getMessageHashesFromL2Tx(withdrawTx2.hash);
-  console.log("withdrawHash:" ,withdrawHash2);
-  await watcher.getL1TransactionReceipt(withdrawHash2)
+await depositTx2.wait();
 
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true)
-    }, 5000);
-  });
 
-  console.log(`oDAI in L2 wallet ${await L2_oDAI.balanceOf(l2Wallet.address)}`);
-  console.log("Balance of DAI in L2_Pool: ", `${await L2_oDAI.balanceOf(L2_Pool.address)}`);
-  console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
+console.log(" waiting for Pool deposit to be relayed to L1 ...")
+const [depositHash2] = await watcher.getMessageHashesFromL2Tx(depositTx2.hash);
+await watcher.getL1TransactionReceipt(depositHash2);
 
-  const pool = BatchWithdrawablePoolAdapter.fromContract(L2_Pool as BatchWithdrawablePool);
-  console.log("withdrawal summaries", (await pool.getWithdrawalSummaries(l2Wallet.address)));
+console.log(`poolTokenEscrow balance ... ${(await L1_Pool.balanceOf(poolTokenEscrow.address)).toString()}`)
+console.log("Balance of DAI in L1_Pool: ", `${await L1_mockDAI.balanceOf(L1_Pool.address)}`);
+console.log("Balance of L2_Pool tokens: ", `${await L2_Pool.balanceOf(l2Wallet.address)}`);
+console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
+
+// withdrawing DAI from L1_Pool
+console.log("Pool Withdrawal (L2->L1->L2) ...");
+const withdrawTx2 = await L2_Pool.connect(l2Wallet).requestWithdrawal(200, { gasLimit: 8900000, gasPrice: 0});
+const revertReason3 = await getOptimismRevertReason({tx: withdrawTx2, provider: l2RpcProvider });
+ 
+if (revertReason3) {
+  console.log(revertReason3);
+}
+
+await withdrawTx2.wait();
+
+console.log("waiting for Pool Withdrawal to be relayed to Layer 2 ...")
+const [withdrawHash2] = await watcher.getMessageHashesFromL2Tx(withdrawTx2.hash);
+console.log("withdrawHash:" ,withdrawHash2);
+await watcher.getL1TransactionReceipt(withdrawHash2)
+
+await new Promise((resolve) => {
+  setTimeout(() => {
+    resolve(true)
+  }, 5000);
+});
+
+console.log(`oDAI in L2 wallet ${await L2_oDAI.balanceOf(l2Wallet.address)}`);
+console.log("Balance of DAI in L2_Pool: ", `${await L2_oDAI.balanceOf(L2_Pool.address)}`);
+console.log("Total assets in yearn vault:" , (await L1_YearnVault.totalAssets()).toString());
+
+const pool = BatchWithdrawablePoolAdapter.fromContract(L2_Pool as BatchWithdrawablePool);
+console.log("withdrawal summaries", (await pool.getWithdrawalSummaries(l2Wallet.address)));
 
 
 */
@@ -320,15 +320,15 @@ async function main() {
 
 
 
-  
+
   console.log(`
 PASTE THE FOLLOWING LINES IN .env:
 
-REACT_APP_L1_DAI_ADDRESS=${L1_mockDAI.address}
-REACT_APP_L2_DAI_ADDRESS=${L2_oDAI.address}
-REACT_APP_L2_POOL_ADDRESS=${L2_Pool.address}
-REACT_APP_L1_TOKEN_GATEWAY_ADDRESS=${L1_ERC20Gateway.address}
-REACT_APP_L1_POOL_ADDRESS=${L1_Pool.address}
+REACT_APP_L1_DAI_ADDRESS=${ L1_mockDAI.address }
+REACT_APP_L2_DAI_ADDRESS=${ L2_oDAI.address }
+REACT_APP_L2_POOL_ADDRESS=${ L2_Pool.address }
+REACT_APP_L1_TOKEN_GATEWAY_ADDRESS=${ L1_ERC20Gateway.address }
+REACT_APP_L1_POOL_ADDRESS=${ L1_Pool.address }
 `)
 
 

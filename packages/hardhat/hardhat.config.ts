@@ -1,23 +1,11 @@
 // Plugins
-require("dotenv").config({ path: "../../.env" });
+import 'dotenv/config'
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-typechain";
-require('@eth-optimism/hardhat-ovm')
+import '@eth-optimism/hardhat-ovm'
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (args, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(await account.address);
-  }
-});
-
-
-
-  task("l2:oDAI:balance", "checks balance of account")
+task("l2:oDAI:balance", "checks balance of account")
   .addParam('address', 'address to check balance of')
   .setAction(async (args, hre) => {
     const accounts = await hre.ethers.getSigners();
@@ -30,8 +18,8 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
     console.log("balance", (await oDAI.balanceOf(args.address)).toString());
   });
 
-  task("l1:pool:properties")
-  .setAction(async(args, hre) => {
+task("l1:pool:properties")
+  .setAction(async (args, hre) => {
     const accounts = await hre.ethers.getSigners();
     const pool = new hre.ethers.Contract(
       process.env.REACT_APP_L1_POOL_ADDRESS,
@@ -53,8 +41,8 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
   });
 
 
-  task("l1:pool:deposit", "withdraws from L1 pool")
-  .setAction( async (args, hre) => {
+task("l1:pool:deposit", "withdraws from L1 pool")
+  .setAction(async (args, hre) => {
     const accounts = await hre.ethers.getSigners();
     const pool = new hre.ethers.Contract(
       process.env.REACT_APP_L1_POOL_ADDRESS,
@@ -66,25 +54,25 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
     console.log(response);
   });
 
-  task("l1:pool:withdraw", "withdraws from L1 pool")
+task("l1:pool:withdraw", "withdraws from L1 pool")
   .addParam('amount', 'amount to withdraw')
   .addParam('withdrawto', 'address to withdraw to')
   .addParam('batchid', 'batch id')
-  .setAction( async (args, hre) => {
-  const accounts = await hre.ethers.getSigners();
-  const pool = new hre.ethers.Contract(
-    process.env.REACT_APP_L1_POOL_ADDRESS,
-    require("./artifacts/contracts/L1_Pool.sol/L1_Pool.json").abi,
-    accounts[0]
-  );
+  .setAction(async (args, hre) => {
+    const accounts = await hre.ethers.getSigners();
+    const pool = new hre.ethers.Contract(
+      process.env.REACT_APP_L1_POOL_ADDRESS,
+      require("./artifacts/contracts/L1_Pool.sol/L1_Pool.json").abi,
+      accounts[0]
+    );
 
-  const response = await pool.withdraw(
-    args.amount, 
-    args.withdrawto, 
-    args.batchid
-  );
-  console.log(response);
-});
+    const response = await pool.withdraw(
+      args.amount,
+      args.withdrawto,
+      args.batchid
+    );
+    console.log(response);
+  });
 
 task("l1:pool:balance", "checks balance of account")
   .addParam('address')
@@ -101,8 +89,8 @@ task("l1:pool:balance", "checks balance of account")
   });
 
 
-  task("l2:pool:properties")
-  .setAction(async(args, hre) => {
+task("l2:pool:properties")
+  .setAction(async (args, hre) => {
     const accounts = await hre.ethers.getSigners();
     const pool = new hre.ethers.Contract(
       process.env.REACT_APP_L2_POOL_ADDRESS,
@@ -129,7 +117,7 @@ module.exports = {
     localhost: {
       url: "http://localhost:9545",
       accounts: {
-        mnemonic: 'test test test test test test test test test test test junk' 
+        mnemonic: 'test test test test test test test test test test test junk'
       }
     },
     hardhat: {

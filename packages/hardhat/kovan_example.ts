@@ -3,7 +3,7 @@ const { Watcher } = require('@eth-optimism/watcher')
 const { predeploys, getContractInterface } = require('@eth-optimism/contracts')
 // Set up some contract factories. You can ignore this stuff.
 const factory = (name, ovm = false, mocks = false) => {
-    const artifact = require(`./artifacts${ovm ? '-ovm' : ''}/contracts/${mocks ? '/mocks/' : ''}${name}.sol/${name}.json`)
+    const artifact = require(`./artifacts${ ovm ? '-ovm' : '' }/contracts/${ mocks ? '/mocks/' : '' }${ name }.sol/${ name }.json`)
     return new ethers.ContractFactory(artifact.abi, artifact.bytecode)
 }
 
@@ -11,13 +11,13 @@ const factory = (name, ovm = false, mocks = false) => {
 const erc20L1Artifact = require(`./artifacts/contracts/ERC20.sol/ERC20.json`)
 const factory__L1_ERC20 = new ethers.ContractFactory(erc20L1Artifact.abi, erc20L1Artifact.bytecode)
 //const factory__L1_ERC20 = factory('ERC20')
-const erc20L2Artifact = require('./node_modules/@eth-optimism/contracts/artifacts-ovm/contracts/optimistic-ethereum/libraries/standards/L2StandardERC20.sol/L2StandardERC20.json')
+const erc20L2Artifact = require('../../node_modules/@eth-optimism/contracts/artifacts/contracts/optimistic-ethereum/libraries/standards/L2StandardERC20.sol/L2StandardERC20.json')
 const factory__L2_ERC20 = new ethers.ContractFactory(erc20L2Artifact.abi, erc20L2Artifact.bytecode)
 
-const l1StandardBridgeArtifact = require(`./node_modules/@eth-optimism/contracts/artifacts/contracts/optimistic-ethereum/OVM/bridge/tokens/OVM_L1StandardBridge.sol/OVM_L1StandardBridge.json`)
+const l1StandardBridgeArtifact = require(`../../node_modules/@eth-optimism/contracts/artifacts/contracts/optimistic-ethereum/OVM/bridge/tokens/OVM_L1StandardBridge.sol/OVM_L1StandardBridge.json`)
 const factory__L1StandardBridge = new ethers.ContractFactory(l1StandardBridgeArtifact.abi, l1StandardBridgeArtifact.bytecode)
 
-const l2StandardBridgeArtifact = require(`./node_modules/@eth-optimism/contracts/artifacts/contracts/optimistic-ethereum/OVM/bridge/tokens/OVM_L2StandardBridge.sol/OVM_L2StandardBridge.json`)
+const l2StandardBridgeArtifact = require(`../../node_modules/@eth-optimism/contracts/artifacts/contracts/optimistic-ethereum/OVM/bridge/tokens/OVM_L2StandardBridge.sol/OVM_L2StandardBridge.json`)
 const factory__L2StandardBridge = new ethers.ContractFactory(l2StandardBridgeArtifact.abi, l2StandardBridgeArtifact.bytecode)
 
 const factory__L1_Pool = factory('L1_Pool');
@@ -96,8 +96,8 @@ async function main() {
     const L1StandardBridge = factory__L1StandardBridge.connect(l1Wallet).attach(L1StandardBridgeAddress)
 
     // Initial balances.
-    console.log(`Balance on L1: ${await L1_ERC20.balanceOf(l1Wallet.address)}`) // 10000
-    console.log(`Balance on L2: ${await L2_ERC20.balanceOf(l1Wallet.address)}`) // 0
+    console.log(`Balance on L1: ${ await L1_ERC20.balanceOf(l1Wallet.address) }`) // 10000
+    console.log(`Balance on L2: ${ await L2_ERC20.balanceOf(l1Wallet.address) }`) // 0
 
     // Allow the gateway to lock up some of our tokens.
     // console.log('Approving tokens for Standard Bridge...')
@@ -189,7 +189,7 @@ async function main() {
     await approveTx.wait();
 
     // allowance check
-    console.log("Allowance of L2_Pool: ", `${await L2_ERC20.allowance(l2Wallet.address, L2_Pool.address)}`);
+    console.log("Allowance of L2_Pool: ", `${ await L2_ERC20.allowance(l2Wallet.address, L2_Pool.address) }`);
 
     // deposit oDAI into L1_Pool
     console.log("Depositing oDAI into L1_Pool ... ");
@@ -207,9 +207,9 @@ async function main() {
     const [depositHash] = await watcher.getMessageHashesFromL2Tx(depositTx.hash);
     await watcher.getL1TransactionReceipt(depositHash);
 
-    console.log(`poolTokenEscrow balance : ${(await L1_Pool.balanceOf(poolTokenEscrow.address)).toString()}`)
-    console.log("Balance of DAI in L1_Pool: ", `${await L1_ERC20.balanceOf(L1_Pool.address)}`);
-    console.log("Balance of L2_Pool tokens: ", `${await L2_Pool.balanceOf(l2Wallet.address)}`);
+    console.log(`poolTokenEscrow balance : ${ (await L1_Pool.balanceOf(poolTokenEscrow.address)).toString() }`)
+    console.log("Balance of DAI in L1_Pool: ", `${ await L1_ERC20.balanceOf(L1_Pool.address) }`);
+    console.log("Balance of L2_Pool tokens: ", `${ await L2_Pool.balanceOf(l2Wallet.address) }`);
     console.log("Total assets in yearn vault:", (await L1_YearnVault.totalAssets()).toString());
 
     // withdrawing DAI from L1_Pool
@@ -234,8 +234,8 @@ async function main() {
         }, 5000);
     });
 
-    console.log(`oDAI in L2 wallet ${await L2_ERC20.balanceOf(l2Wallet.address)}`);
-    console.log("Balance of DAI in L2_Pool: ", `${await L2_ERC20.balanceOf(L2_Pool.address)}`);
+    console.log(`oDAI in L2 wallet ${ await L2_ERC20.balanceOf(l2Wallet.address) }`);
+    console.log("Balance of DAI in L2_Pool: ", `${ await L2_ERC20.balanceOf(L2_Pool.address) }`);
     console.log("Total assets in yearn vault:", (await L1_YearnVault.totalAssets()).toString());
 
     // const pool = BatchWithdrawablePoolAdapter.fromContract(L2_Pool as BatchWithdrawablePool);
@@ -298,12 +298,12 @@ async function main() {
     console.log(`
     PASTE THE FOLLOWING LINES IN .env:
     
-    REACT_APP_L1_DAI_ADDRESS=${L1_ERC20.address}
-    REACT_APP_L2_DAI_ADDRESS=${L2_ERC20.address}
-    REACT_APP_L1_POOL_ADDRESS=${L1_Pool.address}
-    REACT_APP_L2_POOL_ADDRESS=${L2_Pool.address}
-    REACT_APP_L1_TOKEN_GATEWAY_ADDRESS=${L1StandardBridge.address}
-    REACT_APP_L2_TOKEN_GATEWAY_ADDRESS=${L2StandardBridge.address}
+    REACT_APP_L1_DAI_ADDRESS=${ L1_ERC20.address }
+    REACT_APP_L2_DAI_ADDRESS=${ L2_ERC20.address }
+    REACT_APP_L1_POOL_ADDRESS=${ L1_Pool.address }
+    REACT_APP_L2_POOL_ADDRESS=${ L2_Pool.address }
+    REACT_APP_L1_TOKEN_GATEWAY_ADDRESS=${ L1StandardBridge.address }
+    REACT_APP_L2_TOKEN_GATEWAY_ADDRESS=${ L2StandardBridge.address }
     `)
 }
 
